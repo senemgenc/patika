@@ -1,0 +1,82 @@
+----1
+CREATE TABLE Country(
+   id INT GENERATED ALWAYS AS IDENTITY,
+   name VARCHAR(255) NOT NULL,
+   PRIMARY KEY(id)
+);
+
+CREATE TABLE Lig(
+   id INT GENERATED ALWAYS AS IDENTITY,
+   adi VARCHAR(255) NOT NULL,
+   id_country INT NOT NULL,
+   PRIMARY KEY(id),
+   CONSTRAINT fk_country
+      FOREIGN KEY(id_country) 
+	   REFERENCES Country(id)
+);
+
+CREATE TABLE Takim(
+   id INT GENERATED ALWAYS AS IDENTITY,
+   id_leauge INT NOT NULL,
+   kurulus_yili SMALLINT NOT NULL,
+   attigi_gol INT,
+   yedigi_gol INT,
+   puan INT,
+   seviye SMALLINT,
+   PRIMARY KEY(id),
+   CONSTRAINT fk_lig
+      FOREIGN KEY(id_leauge) 
+     REFERENCES Lig(id)
+);
+
+CREATE TABLE Oyuncu(
+   id INT GENERATED ALWAYS AS IDENTITY,
+   adi VARCHAR(255) NOT NULL,
+   soyadi VARCHAR(255) NOT NULL,
+   id_team INT NOT NULL,
+   id_country INT NOT NULL,
+   attıgı_gol INT,
+   PRIMARY KEY(id),
+   CONSTRAINT fk_team
+      FOREIGN KEY(id_team) 
+      REFERENCES Takim(id),
+   CONSTRAINT fk_country
+      FOREIGN KEY(id_country) 
+      REFERENCES Country(id)
+   
+);
+
+--2
+
+INSERT INTO Country(name)
+VALUES ("Türkiye");
+
+INSERT INTO Lig(adi, id_country)
+   VALUES ('Türkiye Ligi',1);
+
+INSERT INTO Takim(id_leauge, kurulus_yili, attigi_gol, yedigi_gol, puan, seviye)
+   VALUES (1,1923,100,0,100,1);
+
+INSERT INTO oyuncu(adi, soyadi, id_team, id_country, attigi_gol)
+   VALUES ('Oyuncu Adı','Oyuncu Soyadı',1,1,0);
+
+--3
+
+İsmi “Türkiye” olan ülkenin liglerinin listesini getiren scripti yazınız.
+
+select * from Lig 
+inner join Country on Country.id = Lig.id_country
+where Country.name ='Türkiye'
+
+--4
+select * from Takim 
+inner join Country on Country.id = Takim.id_country
+where Country.name ='Türkiye'
+
+--5
+select * from Takim 
+inner join Country on Country.id = Takim.id_country
+where Country.name ='Türkiye' and seviye=1
+
+--6
+SELECT (sum(puan)/count(id_leauge)) as ortalama ,id_leauge,count(id_leauge) FROM Takim group by id_leauge
